@@ -68,6 +68,46 @@ async function parseObj(file) {
   return { positions, uvs, normals, objects }
 }
 
+/** Parts that model the lamps at both ends of the car in one piece. */
+const LAMP_PARTS = ['Headlights', 'Lights', 'Lights_Glass']
+/** Below this height (m), rear lamp geometry is the bumper reflectors. */
+const REFLECTOR_MAX_Y = 0.6
+
+/**
+ * Tesla's mesh puts the front and rear lamps in the same parts, so the tail
+ * lights would get headlight materials. Moves their rear triangles into
+ * "<Part>_Rear" (and the low bumper reflectors into "Lights_Reflector") so
+ * the app can give them tail-light materials.
+ */
+function splitLamps(data) {
+  const P = data.positions
+  const take = (name) => {
+    if (!data.objects.has(name)) data.objects.set(name, new Map())
+    return data.objects.get(name)
+  }
+  for (const name of LAMP_PARTS) {
+    const mats = data.objects.get(name)
+    if (!mats) continue
+    for (const [material, corners] of mats) {
+      const front = []
+      for (let i = 0; i < corners.length; i += 3) {
+        const tri = corners.slice(i, i + 3)
+        const x = (P[tri[0][0]][0] + P[tri[1][0]][0] + P[tri[2][0]][0]) / 3
+        const y = (P[tri[0][0]][1] + P[tri[1][0]][1] + P[tri[2][0]][1]) / 3
+        if (x >= 0) {
+          front.push(...tri)
+          continue
+        }
+        const target = take(y < REFLECTOR_MAX_Y ? 'Lights_Reflector' : `${name}_Rear`)
+        if (!target.has(material)) target.set(material, [])
+        target.get(material).push(...tri)
+      }
+      if (front.length) mats.set(material, front)
+      else mats.delete(material)
+    }
+  }
+}
+
 /** Faces meeting at more than this angle keep a hard edge (panel gaps, creases). */
 const CREASE_COS = Math.cos((40 * Math.PI) / 180)
 
@@ -258,6 +298,7 @@ async function main() {
   }
   console.log(`Reading ${SOURCE} (${(statSync(SOURCE).size / 1e6).toFixed(1)} MB)…`)
   const data = await parseObj(SOURCE)
+  splitLamps(data)
 
   const doc = new Document()
   const buffer = doc.createBuffer()

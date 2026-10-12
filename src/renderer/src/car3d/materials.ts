@@ -10,6 +10,8 @@ export type Role =
   | 'lightWhite'
   | 'lightRed'
   | 'lightAmber'
+  | 'reverse'
+  | 'reflector'
   | 'interior'
   | 'seat'
   | 'screen'
@@ -38,10 +40,14 @@ const BY_KEY: Record<string, Role> = {
 
 const BY_PART: [RegExp, Role][] = [
   [/^(Windows_Top|Window_)/, 'glass'],
-  [/^Lights_Trunk_Glass/, 'tailLens'],
+  // Rear lamps come first: several share a name prefix with the headlights.
+  // The *_Rear and Lights_Reflector parts are split off by the build script.
+  [/^(Lights_Trunk_Glass|Lights_Glass_Rear)$/, 'tailLens'],
+  [/^(Brake_Lights|Lights_Trunk|Headlights_Trunk|Headlights_Rear|Lights_Rear)/, 'lightRed'],
+  [/^Lights_Reflector$/, 'reflector'],
+  [/^Reverse_Lights/, 'reverse'],
   [/^Lights_Glass/, 'lens'],
-  [/^(Headlights|DRL|Lights$|Reverse_Lights|Fog_Lights_Front)/, 'lightWhite'],
-  [/^(Brake_Lights|Lights_Trunk$|Headlights_Trunk)/, 'lightRed'],
+  [/^(Headlights|DRL|Lights$|Fog_Lights_Front)/, 'lightWhite'],
   [/Turn_Signal/, 'lightAmber'],
   [/^Spoiler/, 'carbon'],
   [/^Seat_.*_Color$/, 'seat'],
@@ -129,24 +135,42 @@ function createBaseMaterials(paint: Paint): Record<Role, THREE.Material> {
       clearcoat: 1,
       envMapIntensity: 2
     }),
+    // Smoked red lens over the tail lamps.
     tailLens: new THREE.MeshPhysicalMaterial({
       color: '#3a0306',
       roughness: 0.05,
       clearcoat: 1,
       transparent: true,
-      opacity: 0.85,
+      opacity: 0.6,
+      depthWrite: false,
       emissive: '#7a0710',
-      emissiveIntensity: 0.6
+      emissiveIntensity: 0.35
     }),
     lightWhite: new THREE.MeshStandardMaterial({ color: '#e9efff', emissive: '#dfe9ff', emissiveIntensity: 1.4 }),
     lightRed: new THREE.MeshStandardMaterial({ color: '#5a0006', emissive: '#ff1428', emissiveIntensity: 0.9 }),
     lightAmber: new THREE.MeshStandardMaterial({ color: '#4a2a00', emissive: '#ff8a00', emissiveIntensity: 0.25 }),
+    // Sits behind the clear part of the tail lens, so it is drawn over the red
+    // lens (CarModel gives it a later render order). Unlit until the car is in
+    // Reverse (see setReversing).
+    reverse: new THREE.MeshPhysicalMaterial({
+      color: '#55585e',
+      roughness: 0.15,
+      clearcoat: 1,
+      transparent: true,
+      emissive: '#ffffff',
+      emissiveIntensity: 0
+    }),
+    reflector: new THREE.MeshPhysicalMaterial({ color: '#4a060b', roughness: 0.2, clearcoat: 1, clearcoatRoughness: 0.05 }),
     // The cabin sits under the glass roof, so it catches little of the studio light.
     interior: new THREE.MeshStandardMaterial({ color: '#141416', roughness: 0.9, metalness: 0.05, envMapIntensity: 0.35 }),
     seat: new THREE.MeshStandardMaterial({ color: '#1c1c1f', roughness: 0.75, envMapIntensity: 0.3 }),
     screen: new THREE.MeshStandardMaterial({ color: '#050608', roughness: 0.2, emissive: '#0b1a33', emissiveIntensity: 0.5 }),
     carbon: new THREE.MeshPhysicalMaterial({ color: '#151618', metalness: 0.3, roughness: 0.3, clearcoat: 1, clearcoatRoughness: 0.05 })
   }
+}
+
+export function setReversing(materials: Record<Role, THREE.Material>, on: boolean): void {
+  ;(materials.reverse as THREE.MeshPhysicalMaterial).emissiveIntensity = on ? 3 : 0
 }
 
 export function applyPaint(material: THREE.Material, paint: Paint): void {

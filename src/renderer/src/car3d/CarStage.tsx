@@ -261,7 +261,7 @@ function Scene({ mode }: { mode: Mode }) {
   const theme = useStore((s) => s.settings.theme)
   const paint = useStore((s) => s.settings.paint)
   const trim = useStore((s) => s.settings.trim)
-  const { frunkOpen, trunkOpen } = useStore((s) => s.vehicle)
+  const { frunkOpen, trunkOpen, gear } = useStore((s) => s.vehicle)
   const [settled, setSettled] = useState(false)
   const dark = theme === 'dark'
   const fog = dark ? '#0b0b0c' : '#e6e6e8'
@@ -273,7 +273,7 @@ function Scene({ mode }: { mode: Mode }) {
       {/* A little direct light for the tyres and sills the dome barely reaches. */}
       <hemisphereLight args={['#ffffff', dark ? '#111113' : '#9a9aa0', 0.35]} />
 
-      <CarModel paintId={paint} trim={trim} frunkOpen={frunkOpen} trunkOpen={trunkOpen} />
+      <CarModel paintId={paint} trim={trim} frunkOpen={frunkOpen} trunkOpen={trunkOpen} reversing={gear === 'R'} />
 
       {/* Parked, the car sits on the pane's own backdrop in a pool of light. */}
       {mode === 'park' && <FloorGlow dark={dark} />}

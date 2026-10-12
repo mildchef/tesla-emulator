@@ -3,7 +3,7 @@ import { useFrame } from '@react-three/fiber'
 import { useEffect, useMemo } from 'react'
 import * as THREE from 'three'
 import type { Trim } from '@shared/types'
-import { applyPaint, createMaterials, roleOf } from './materials'
+import { applyPaint, createMaterials, roleOf, setReversing } from './materials'
 import { getPaint } from './paints'
 import { Wheel } from './Wheel'
 
@@ -18,7 +18,7 @@ const WHEEL_Y = 0.336
 const HOOD_HINGE = new THREE.Vector3(1.12, 0.9, 0)
 const TRUNK_HINGE = new THREE.Vector3(-1.53, 1.22, 0)
 const HOOD_PARTS = ['Hood']
-const TRUNK_PARTS = ['Trunk', 'Lights_Trunk', 'Lights_Trunk_Glass', 'Headlights_Trunk', 'Spoiler1', 'Trunk_Card', 'Trunk_Bracket1', 'Trunk_Bracket2']
+const TRUNK_PARTS = ['Trunk', 'Lights_Trunk', 'Lights_Trunk_Glass', 'Headlights_Trunk', 'Reverse_Lights', 'Spoiler1', 'Trunk_Card', 'Trunk_Bracket1', 'Trunk_Bracket2']
 
 /**
  * The build script bakes ambient occlusion into a custom `_AO` attribute
@@ -41,10 +41,12 @@ interface Props {
   trim: Trim
   frunkOpen: boolean
   trunkOpen: boolean
+  /** Lights the reverse lights. */
+  reversing: boolean
 }
 
 /** Tesla's Model 3 Highland visualization mesh with generated wheels. */
-export function CarModel({ paintId, trim, frunkOpen, trunkOpen }: Props) {
+export function CarModel({ paintId, trim, frunkOpen, trunkOpen, reversing }: Props) {
   const { scene } = useGLTF(MODEL_URL, false, true)
 
   const car = useMemo(() => {
@@ -53,7 +55,9 @@ export function CarModel({ paintId, trim, frunkOpen, trunkOpen }: Props) {
     root.traverse((o) => {
       const mesh = o as THREE.Mesh
       if (mesh.isMesh) {
-        mesh.material = materials[roleOf((mesh.material as THREE.Material).name)]
+        const role = roleOf((mesh.material as THREE.Material).name)
+        mesh.material = materials[role]
+        if (role === 'reverse') mesh.renderOrder = 1
         useBakedAo(mesh.geometry)
       }
     })
@@ -77,6 +81,7 @@ export function CarModel({ paintId, trim, frunkOpen, trunkOpen }: Props) {
   }, [scene])
 
   useEffect(() => applyPaint(car.materials.paint, getPaint(paintId)), [car, paintId])
+  useEffect(() => setReversing(car.materials, reversing), [car, reversing])
   useEffect(() => {
     if (car.spoiler) car.spoiler.visible = trim === 'performance'
   }, [car, trim])
