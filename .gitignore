@@ -1,0 +1,12 @@
+node_modules/
+out/
+dist/
+test-results/
+playwright-report/
+src/renderer/public/models/*.glb
+# Tesla's model source (not ours to redistribute) and the emulator's own data
+vendor/tesla/
+.emulator-data/
+.emulator-data.partial-*
+.DS_Store
+*.tsbuildinfo

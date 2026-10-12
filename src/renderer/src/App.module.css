@@ -1,0 +1,56 @@
+.app {
+  display: flex;
+  height: 100%;
+  background:
+    radial-gradient(90% 70% at 50% 40%, #232326 0%, #121214 55%, #08080a 100%);
+}
+
+.area {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.bezel {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform-origin: 0 0;
+  border-radius: 46px;
+  background: linear-gradient(160deg, #1a1a1c 0%, #050505 40%, #050505 70%, #141416 100%);
+  box-shadow:
+    0 0 0 2px #2c2c2f,
+    0 0 0 3px #0a0a0a,
+    inset 0 0 0 1px rgba(255, 255, 255, 0.05),
+    0 40px 90px rgba(0, 0, 0, 0.6);
+}
+
+.screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--screen-bg);
+  color: var(--fg);
+}
+
+.drawerHandle {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  writing-mode: vertical-rl;
+  padding: 14px 6px;
+  border-radius: 8px 0 0 8px;
+  background: rgba(255, 255, 255, 0.06);
+  color: #9a9aa0;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+}
+
+.drawerHandle:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #e4e4e7;
+}

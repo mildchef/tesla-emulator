@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tesla Browser Probe</title>
+<style>
+  :root { color-scheme: light dark; --bg: #f4f4f5; --fg: #18181b; --muted: #71717a; --card: #fff; --line: #e4e4e7; --accent: #3e6ae1; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #121214; --fg: #f4f4f5; --muted: #a1a1aa; --card: #1c1c1f; --line: #2c2c31; } }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 15px/1.45 system-ui, sans-serif; background: var(--bg); color: var(--fg); }
+  main { max-width: 980px; margin: 0 auto; padding: 20px 16px 40px; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  p.lead { margin: 0 0 16px; color: var(--muted); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
+  .item { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
+  .item b { display: block; font-size: 12px; color: var(--muted); font-weight: 500; text-transform: uppercase; letter-spacing: .04em; }
+  .item span { font-size: 17px; font-variant-numeric: tabular-nums; word-break: break-word; }
+  .ua { grid-column: 1 / -1; }
+  .ua span { font-size: 14px; font-family: ui-monospace, monospace; }
+  button { font: inherit; padding: 10px 16px; border-radius: 8px; border: 0; background: var(--accent); color: #fff; margin: 16px 8px 0 0; cursor: pointer; }
+  pre { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 12px; overflow: auto; font-size: 12px; max-height: 240px; }
+  .yes { color: #16a34a; } .no { color: #dc2626; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Tesla Browser Probe</h1>
+  <p class="lead">What this browser exposes to web pages. Open it in the car and in the emulator to compare.</p>
+  <div class="grid" id="grid"></div>
+  <button id="copy">Copy JSON</button><button id="refresh">Refresh</button>
+  <pre id="json"></pre>
+</main>
+<script>
+  function mq(q) { return matchMedia(q).matches; }
+  function pick(list) { for (const [v, q] of list) if (mq(q)) return v; return 'n/a'; }
+  function webgl() {
+    try {
+      const c = document.createElement('canvas');
+      const gl = c.getContext('webgl2') || c.getContext('webgl');
+      if (!gl) return 'no';
+      const ext = gl.getExtension('WEBGL_debug_renderer_info');
+      return (gl instanceof WebGL2RenderingContext ? 'WebGL2' : 'WebGL1') + (ext ? ' · ' + gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) : '');
+    } catch (e) { return 'error'; }
+  }
+  function codecs() {
+    const list = { 'H.264': 'video/mp4; codecs="avc1.42E01E"', 'HEVC': 'video/mp4; codecs="hvc1.1.6.L93.B0"', 'VP9': 'video/webm; codecs="vp9"', 'AV1': 'video/mp4; codecs="av01.0.05M.08"', 'AAC': 'audio/mp4; codecs="mp4a.40.2"', 'Opus': 'audio/webm; codecs="opus"' };
+    const out = {};
+    for (const [k, t] of Object.entries(list)) out[k] = window.MediaSource ? MediaSource.isTypeSupported(t) : false;
+    return out;
+  }
+  function collect() {
+    return {
+      time: new Date().toISOString(),
+      userAgent: navigator.userAgent,
+      uaPlatform: navigator.userAgentData ? navigator.userAgentData.platform : 'n/a',
+      uaBrands: navigator.userAgentData ? navigator.userAgentData.brands.map(b => b.brand + ' ' + b.version).join(', ') : 'n/a',
+      innerWidth: innerWidth, innerHeight: innerHeight,
+      outerWidth: outerWidth, outerHeight: outerHeight,
+      devicePixelRatio: devicePixelRatio,
+      screen: screen.width + '×' + screen.height,
+      availScreen: screen.availWidth + '×' + screen.availHeight,
+      visualViewport: window.visualViewport ? Math.round(visualViewport.width) + '×' + Math.round(visualViewport.height) + ' @' + visualViewport.scale : 'n/a',
+      pointer: pick([['coarse', '(pointer: coarse)'], ['fine', '(pointer: fine)'], ['none', '(pointer: none)']]),
+      hover: pick([['hover', '(hover: hover)'], ['none', '(hover: none)']]),
+      anyPointer: pick([['coarse', '(any-pointer: coarse)'], ['fine', '(any-pointer: fine)']]),
+      prefersColorScheme: pick([['dark', '(prefers-color-scheme: dark)'], ['light', '(prefers-color-scheme: light)']]),
+      prefersReducedMotion: mq('(prefers-reduced-motion: reduce)'),
+      maxTouchPoints: navigator.maxTouchPoints,
+      touchEvents: 'ontouchstart' in window,
+      deviceMemory: navigator.deviceMemory,
+      hardwareConcurrency: navigator.hardwareConcurrency,
+      language: navigator.language,
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      webgl: webgl(),
+      webgpu: 'gpu' in navigator,
+      webcodecs: typeof VideoDecoder !== 'undefined',
+      webrtc: typeof RTCPeerConnection !== 'undefined',
+      mediaSource: typeof MediaSource !== 'undefined',
+      mseCodecs: codecs(),
+      serviceWorker: 'serviceWorker' in navigator,
+      geolocation: 'geolocation' in navigator,
+      fullscreenEnabled: document.fullscreenEnabled,
+      getUserMedia: !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)
+    };
+  }
+  function render() {
+    const d = collect();
+    const grid = document.getElementById('grid');
+    grid.innerHTML = '';
+    for (const [k, v] of Object.entries(d)) {
+      if (k === 'time') continue;
+      const el = document.createElement('div');
+      el.className = 'item' + (k === 'userAgent' ? ' ua' : '');
+      let text = typeof v === 'object' ? Object.entries(v).map(([a, b]) => a + (b ? ' ✓' : ' ✗')).join('  ') : String(v);
+      el.innerHTML = '<b></b><span></span>';
+      el.querySelector('b').textContent = k;
+      const span = el.querySelector('span');
+      span.textContent = text;
+      if (v === true) span.className = 'yes';
+      if (v === false) span.className = 'no';
+      grid.appendChild(el);
+    }
+    document.getElementById('json').textContent = JSON.stringify(d, null, 2);
+    window.__probe = d;
+  }
+  document.getElementById('copy').onclick = () => navigator.clipboard.writeText(JSON.stringify(collect(), null, 2));
+  document.getElementById('refresh').onclick = render;
+  addEventListener('resize', render);
+  render();
+</script>
+</body>
+</html>

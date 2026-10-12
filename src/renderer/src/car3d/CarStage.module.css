@@ -1,0 +1,44 @@
+.stage {
+  position: absolute;
+  inset: 0;
+}
+
+/* Labels sit above their anchor point with a leader line down to the car. */
+.label {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding-left: 10px;
+  border-left: 1.5px solid var(--fg-3);
+  transform: translateY(-100%);
+  text-align: left;
+  line-height: 1.2;
+  white-space: nowrap;
+  color: var(--fg);
+}
+
+.label span {
+  font-size: 22px;
+  color: var(--fg-2);
+}
+
+.label b {
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.lock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  transform: translate(-50%, -100%);
+  color: var(--fg);
+  background: linear-gradient(var(--fg-3), var(--fg-3)) center 50px / 1.5px calc(100% - 50px) no-repeat;
+}
+
+.bolt {
+  display: block;
+  transform: translate(10px, -50%);
+  color: var(--fg);
+}

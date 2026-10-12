@@ -1,0 +1,90 @@
+.toolbar {
+  position: relative;
+  height: 97px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 22px 0 14px;
+  background: var(--toolbar-bg);
+  color: var(--fg);
+  z-index: 2;
+}
+
+.icon {
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  color: var(--fg-2);
+}
+
+.icon:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.icon:not(:disabled):active {
+  background: var(--divider);
+}
+
+.field {
+  position: relative;
+  flex: 1;
+  height: 52px;
+  margin: 0 14px 0 18px;
+  display: flex;
+  align-items: center;
+  border-radius: 10px;
+  background: var(--field-bg);
+  border: 1.5px solid var(--field-border);
+  overflow: hidden;
+}
+
+.fieldIcon {
+  margin: 0 12px 0 16px;
+  color: var(--field-placeholder);
+  flex: none;
+}
+
+.field input {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--field-fg);
+  font-size: 21px;
+  user-select: text;
+}
+
+.field input::placeholder {
+  color: var(--field-placeholder);
+}
+
+.reload {
+  display: flex;
+  padding: 0 18px;
+  color: var(--fg-2);
+}
+
+.loadingBar {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 3px;
+  width: 40%;
+  background: var(--tesla-blue);
+  animation: load 1.2s ease-in-out infinite;
+}
+
+@keyframes load {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(260%);
+  }
+}

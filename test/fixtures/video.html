@@ -1,0 +1,68 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Video fixture</title>
+<style>
+  html, body { margin: 0; background: #fff; font: 16px system-ui; }
+  video { display: block; width: 320px; height: 180px; background: #000; object-fit: contain; }
+  #out { padding: 8px; }
+</style>
+</head>
+<body>
+<video id="v" playsinline></video>
+<div id="out">fixture</div>
+<script>
+  // Animated canvas + oscillator tone, played through a real <video> element.
+  const canvas = document.createElement('canvas');
+  canvas.width = 320; canvas.height = 180;
+  const ctx = canvas.getContext('2d');
+  let frame = 0;
+  function paint() {
+    frame++;
+    const hue = (frame * 7) % 360;
+    ctx.fillStyle = `hsl(${hue} 90% 50%)`;
+    ctx.fillRect(0, 0, 320, 180);
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 64px system-ui';
+    ctx.fillText(String(frame), 20, 110);
+    requestAnimationFrame(paint);
+  }
+  paint();
+  const stream = canvas.captureStream(30);
+  try {
+    const ac = new AudioContext();
+    const osc = ac.createOscillator();
+    osc.frequency.value = 330;
+    const dest = ac.createMediaStreamDestination();
+    osc.connect(dest);
+    osc.start();
+    stream.addTrack(dest.stream.getAudioTracks()[0]);
+    window.__audioContext = ac;
+  } catch (e) {}
+  const v = document.getElementById('v');
+  v.srcObject = stream;
+
+  window.startVideo = async () => {
+    if (window.__audioContext) await window.__audioContext.resume();
+    v.muted = false;
+    await v.play();
+    return { paused: v.paused, muted: v.muted, hasAudio: stream.getAudioTracks().length > 0 };
+  };
+  window.videoState = () => ({ paused: v.paused, muted: v.muted, time: v.currentTime, rect: v.getBoundingClientRect().toJSON() });
+  window.readCenterPixel = (via) => {
+    const c = document.createElement('canvas');
+    c.width = 320; c.height = 180;
+    const x = c.getContext('2d');
+    if (via === 'bitmap') {
+      return createImageBitmap(v).then((bmp) => { x.drawImage(bmp, 0, 0); return Array.from(x.getImageData(160, 90, 1, 1).data); });
+    }
+    x.drawImage(v, 0, 0, 320, 180);
+    return Promise.resolve(Array.from(x.getImageData(160, 90, 1, 1).data));
+  };
+  window.isFrozen = () => getComputedStyle(v).objectPosition.startsWith('-100000px');
+  window.tryFullscreen = () => v.requestFullscreen().then(() => 'ok', (e) => e.name);
+  window.tryCamera = () => navigator.mediaDevices.getUserMedia({ video: true }).then(() => 'ok', (e) => e.name + ': ' + e.message);
+</script>
+</body>
+</html>

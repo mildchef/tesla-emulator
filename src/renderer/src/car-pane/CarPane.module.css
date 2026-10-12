@@ -1,0 +1,67 @@
+.pane {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.topRow {
+  position: absolute;
+  left: 22px;
+  right: 22px;
+  top: 22px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 2;
+}
+
+.speed {
+  position: absolute;
+  left: 30px;
+  top: 74px;
+  display: flex;
+  flex-direction: column;
+  z-index: 2;
+}
+
+.speed b {
+  font-size: 110px;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.speed span {
+  font-size: 22px;
+  color: var(--fg-2);
+  letter-spacing: 0.06em;
+  margin-left: 4px;
+}
+
+.pageDots {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 6px;
+  display: flex;
+  justify-content: center;
+  gap: 9px;
+}
+
+.pageDots i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--fg-3);
+  opacity: 0.5;
+}
+
+.pageDots .dotActive {
+  background: var(--fg);
+  opacity: 1;
+}
+
+/* The drive mode strip takes the left edge; PRND and speed move clear of it. */
+.withStrip .topRow,
+.withStrip .speed {
+  left: 104px;
+}

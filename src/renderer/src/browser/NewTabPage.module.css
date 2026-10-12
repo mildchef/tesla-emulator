@@ -1,0 +1,72 @@
+.ntp {
+  position: absolute;
+  inset: 0;
+  background: var(--ntp-bg);
+  color: var(--fg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 230px;
+}
+
+.wordmark {
+  font-size: 36px;
+  font-weight: 500;
+  letter-spacing: 0.62em;
+  margin-right: -0.62em; /* keep the letter-spaced word centred */
+  line-height: 1;
+  color: var(--fg);
+}
+
+.tiles {
+  margin-top: 88px;
+  display: grid;
+  grid-template-columns: repeat(6, 160px);
+  justify-content: center;
+  row-gap: 44px;
+}
+
+.tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.circle {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--tile-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.circle img {
+  position: relative;
+  z-index: 1;
+  width: 34px;
+  height: 34px;
+  border-radius: 6px;
+  background: var(--tile-bg);
+}
+
+.circle i {
+  position: absolute;
+  font-style: normal;
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--fg-2);
+}
+
+.name {
+  max-width: 150px;
+  font-size: 18px;
+  color: var(--fg);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

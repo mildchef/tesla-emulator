@@ -1,0 +1,7 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Popup fixture</title></head>
+<body>
+<a id="blank" href="/target.html" target="_blank">open in new tab</a>
+<a id="dl" href="/file.txt" download="file.txt">download</a>
+<script>window.openPopup = () => { window.open('/target.html?via=window.open'); return 'called' }</script>
+</body></html>

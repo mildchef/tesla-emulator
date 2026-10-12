@@ -1,0 +1,30 @@
+.scrim {
+  position: absolute;
+  inset: 0 0 115px 0;
+  z-index: 20;
+}
+
+.panel {
+  position: absolute;
+  z-index: 21;
+  left: 50%;
+  bottom: 135px;
+  transform: translateX(-50%);
+  display: grid;
+  grid-template-columns: repeat(5, 150px);
+  gap: 24px 10px;
+  padding: 34px 30px;
+  border-radius: 22px;
+  background: var(--card);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(24px);
+}
+
+.tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  font-size: 20px;
+  color: var(--fg);
+}

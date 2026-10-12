@@ -1,0 +1,63 @@
+.park {
+  position: absolute;
+  left: 68px;
+  top: 400px;
+  opacity: 0.9;
+}
+
+.road {
+  position: absolute;
+  inset: 0;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.overlay > * {
+  pointer-events: auto;
+}
+
+.label {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding-left: 10px;
+  border-left: 1.5px solid var(--fg-3);
+  text-align: left;
+  line-height: 1.2;
+}
+
+.label span {
+  font-size: 22px;
+  color: var(--fg-2);
+}
+
+.label b {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--fg);
+}
+
+.lockLabel {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: var(--fg);
+}
+
+.lockLabel i {
+  width: 1.5px;
+  margin-top: 8px;
+  background: var(--fg-3);
+}
+
+.bolt {
+  position: absolute;
+  color: var(--fg);
+}

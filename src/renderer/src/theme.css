@@ -1,0 +1,93 @@
+@import '@fontsource/montserrat/400.css';
+@import '@fontsource/montserrat/500.css';
+@import '@fontsource/montserrat/600.css';
+
+/* All Tesla-screen sizes are in physical panel pixels (the stage is 1920x1200). */
+:root {
+  /* Montserrat ships with the app (node_modules/@fontsource), so no system font is looked up. */
+  --font: 'Montserrat', sans-serif;
+  --tesla-blue: #3e6ae1;
+  --tesla-red: #e82127;
+  --dock-bg: #0b0b0c;
+  --dock-fg: #f2f2f3;
+  --dock-dim: #8e8e93;
+}
+
+.theme-dark {
+  --screen-bg: #0c0c0d;
+  --pane-bg: radial-gradient(120% 90% at 50% 38%, #1b1b1d 0%, #0d0d0e 60%, #060607 100%);
+  --fg: #f4f4f5;
+  --fg-2: #b4b4b9;
+  --fg-3: #77777d;
+  --card: rgba(40, 40, 43, 0.92);
+  --card-2: #333337;
+  --card-border: rgba(255, 255, 255, 0.04);
+  --divider: rgba(255, 255, 255, 0.08);
+  --status-fg: #f4f4f5;
+  --toolbar-bg: #1d1d1f;
+  --field-bg: #2c2c2f;
+  --field-border: transparent;
+  --field-fg: #f4f4f5;
+  --field-placeholder: #8a8a90;
+  --ntp-bg: #141415;
+  --tile-bg: #2b2b2e;
+  --strip-bg: rgba(255, 255, 255, 0.06);
+  --strip-active: rgba(255, 255, 255, 0.16);
+  --dots: rgba(255, 255, 255, 0.22);
+  --shadow: 0 8px 30px rgba(0, 0, 0, 0.45);
+  --map-fallback: #1a1c20;
+}
+
+.theme-light {
+  --screen-bg: #f1f1f2;
+  --pane-bg: radial-gradient(120% 90% at 50% 38%, #f7f7f8 0%, #e8e8ea 65%, #dcdcdf 100%);
+  --fg: #171a20;
+  --fg-2: #4b4d52;
+  --fg-3: #8e8f94;
+  --card: rgba(255, 255, 255, 0.96);
+  --card-2: #f3f3f4;
+  --card-border: rgba(0, 0, 0, 0.04);
+  --divider: rgba(0, 0, 0, 0.08);
+  --status-fg: #171a20;
+  --toolbar-bg: #f4f4f5;
+  --field-bg: #ffffff;
+  --field-border: #dedee1;
+  --field-fg: #171a20;
+  --field-placeholder: #7d7e83;
+  --ntp-bg: #f1f1f2;
+  --tile-bg: #e6e6e9;
+  --strip-bg: rgba(0, 0, 0, 0.05);
+  --strip-active: rgba(0, 0, 0, 0.1);
+  --dots: rgba(0, 0, 0, 0.22);
+  --shadow: 0 6px 24px rgba(0, 0, 0, 0.12);
+  --map-fallback: #e4e4e2;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: #0d0d0f;
+  font-family: var(--font);
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+input {
+  font: inherit;
+}

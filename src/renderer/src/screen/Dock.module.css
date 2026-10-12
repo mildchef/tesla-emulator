@@ -1,0 +1,77 @@
+.dock {
+  position: relative;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.car {
+  position: absolute;
+  left: 52px;
+  display: flex;
+  color: var(--dock-fg);
+}
+
+.climate {
+  position: absolute;
+  left: 270px;
+  display: flex;
+  align-items: center;
+  gap: 34px;
+  color: var(--dock-dim);
+}
+
+.climate button,
+.volume button {
+  display: flex;
+  color: var(--dock-dim);
+}
+
+.temp {
+  min-width: 70px;
+  text-align: center;
+  font-size: 44px;
+  font-weight: 400;
+  color: var(--dock-fg);
+  font-variant-numeric: tabular-nums;
+}
+
+.apps {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 40px;
+}
+
+.app {
+  position: relative;
+  display: flex;
+  width: 60px;
+  height: 60px;
+  align-items: center;
+  justify-content: center;
+}
+
+.activeDot {
+  position: absolute;
+  bottom: -12px;
+  left: 50%;
+  width: 7px;
+  height: 7px;
+  margin-left: -3.5px;
+  border-radius: 50%;
+  background: var(--tesla-blue);
+}
+
+.volume {
+  position: absolute;
+  right: 270px;
+  display: flex;
+  align-items: center;
+  gap: 40px;
+}
+
+.volume button:nth-child(2) {
+  color: var(--dock-fg);
+}

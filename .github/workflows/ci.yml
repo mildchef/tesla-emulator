@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      # The runner image already has Xvfb and Chromium's libraries; only add what's missing.
+      - name: Check display and audio tooling
+        run: |
+          which xvfb-run
+          which pulseaudio || (sudo apt-get install -y --no-install-recommends pulseaudio || (sudo apt-get update && sudo apt-get install -y --no-install-recommends pulseaudio))
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Build
+        run: npx electron-vite build
+
+      - name: End-to-end tests
+        run: |
+          pulseaudio --start --exit-idle-time=-1 || true
+          xvfb-run --auto-servernum --server-args="-screen 0 1920x1200x24" npx playwright test
+
+      - name: Upload test report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7

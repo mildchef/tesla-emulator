@@ -1,0 +1,43 @@
+{
+  "name": "tesla-emulator",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Tesla Model 3 Highland touchscreen + in-car browser emulator for developing Tesla web apps",
+  "main": "out/main/index.js",
+  "scripts": {
+    "dev": "electron-vite dev",
+    "build": "electron-vite build",
+    "start": "electron-vite preview",
+    "typecheck": "tsc --noEmit -p tsconfig.node.json && tsc --noEmit -p tsconfig.web.json",
+    "build:car": "node scripts/build-car-model.mjs",
+    "test": "electron-vite build && playwright test",
+    "probe:lan": "node scripts/serve-probe.mjs"
+  },
+  "dependencies": {
+    "@fontsource/montserrat": "^5.3.0",
+    "@react-three/drei": "^10.7.9",
+    "@react-three/fiber": "^9.8.1",
+    "maplibre-gl": "^6.14.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "three": "^0.186.1",
+    "zustand": "^5.0.15"
+  },
+  "devDependencies": {
+    "@gltf-transform/core": "^4.5.1",
+    "@gltf-transform/extensions": "^4.5.1",
+    "@gltf-transform/functions": "^4.5.1",
+    "@playwright/test": "^1.64.0",
+    "@types/node": "^24.19.2",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@types/three": "^0.186.0",
+    "@vitejs/plugin-react": "^5.2.0",
+    "electron": "42.11.12",
+    "electron-vite": "^5.0.0",
+    "meshoptimizer": "^1.3.0",
+    "three-mesh-bvh": "^0.9.16",
+    "typescript": "~5.9.3",
+    "vite": "^7.3.7"
+  }
+}
