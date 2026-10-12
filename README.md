@@ -32,7 +32,7 @@ The only outside resources are online: the map tiles (CARTO), favicons on the ne
 
 ## Using it
 
-- **Load your app:** start your dev server as usual and type its address, such as `localhost:5173` or `192.168.1.20:3000`, in the browser's address bar. Local addresses open over plain `http://`, which Chromium treats as secure, so geolocation and the camera work. The emulator's own UI runs on port 47173 in dev mode, so it doesn't take your app's port.
+- **Load your app:** start your dev server as usual and type its address, such as `localhost:5173` or `192.168.1.20:3000`, in the browser's address bar. Local addresses open over plain `http://`. Chromium treats `localhost` and `127.0.0.1` as secure, so geolocation and the camera work there; on a LAN address they need HTTPS, as in the car. The emulator's own UI runs on port 47173 in dev mode, so it doesn't take your app's port.
 - **Dev drawer (⌘. or the DEV tab):**
   - gear buttons
   - DevTools for the page under test
@@ -44,6 +44,12 @@ The only outside resources are online: the map tiles (CARTO), favicons on the ne
 - **Vehicle menu:** ⌘⇧P / ⌘⇧R / ⌘⇧N / ⌘⇧D shift gears.
 - **Probe page:** the new-tab page links a probe that lists everything the browser exposes. To open it in your car, run `npm run probe:lan` with the car on the same Wi-Fi, then enter the printed address in the car's browser. Compare the numbers and tune `src/shared/profiles.ts`.
 - **Map:** follows your location (macOS Location Services, falling back to an IP lookup via ipapi.co). Right-click the map to place the car anywhere. Pages in the browser get that position from `navigator.geolocation`, as they would from the car's GPS.
+
+## Testing with Claude Code
+
+The [tesla-web-dev](https://github.com/mildchef/tesla-web-dev) skill teaches Claude Code the car browser's limits. Its `emu` CLI lets Claude drive this emulator from any project: open your dev server, shift into Drive, take screenshots, run code in the page and read its console. The skill's source is in `packages/tesla-web-dev`.
+
+While the emulator runs, it serves a control API on `127.0.0.1` that `emu` uses. Its port and a random token are in `.emulator-data/control.json`. Requests without the token are refused, and so are requests from web pages.
 
 ## Tests
 

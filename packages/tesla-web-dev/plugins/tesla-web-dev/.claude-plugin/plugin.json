@@ -1,0 +1,12 @@
+{
+  "name": "tesla-web-dev",
+  "description": "Know the Tesla in-car browser's limits and test web apps in the Tesla Emulator: open the app, shift into Drive, take screenshots, read the console.",
+  "version": "0.1.0",
+  "author": {
+    "name": "mildchef"
+  },
+  "homepage": "https://github.com/mildchef/tesla-web-dev",
+  "repository": "https://github.com/mildchef/tesla-web-dev",
+  "license": "MIT",
+  "keywords": ["tesla", "browser", "web", "testing", "emulator"]
+}

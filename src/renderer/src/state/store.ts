@@ -151,6 +151,7 @@ export async function connectStore(): Promise<void> {
   api.onForceCollapse(() => {
     if (useStore.getState().browserLayout !== 'split') void useStore.getState().setBrowserLayout('split')
   })
+  api.onSetLayout((layout) => void useStore.getState().setBrowserLayout(layout))
   api.onToggleDrawer(() => useStore.getState().toggleDrawer())
 }
 

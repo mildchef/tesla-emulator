@@ -30,7 +30,7 @@ export function serveFixtures(): Promise<{ url: string; close: () => void }> {
   )
 }
 
-export async function launch(): Promise<{ app: ElectronApplication; win: Page }> {
+export async function launch(): Promise<{ app: ElectronApplication; win: Page; userData: string }> {
   const userData = mkdtempSync(join(tmpdir(), 'tesla-emu-'))
   const args = ['.']
   if (process.platform === 'linux') args.push('--no-sandbox')
@@ -49,7 +49,7 @@ export async function launch(): Promise<{ app: ElectronApplication; win: Page }>
   win.on('pageerror', (e) => console.log('[ui:pageerror]', e.message))
   await win.waitForSelector('[data-testid=webview]')
   await expect.poll(() => app.evaluate(() => !!globalThis.__teslaEmulator?.guestContents()), { timeout: 30_000 }).toBe(true)
-  return { app, win }
+  return { app, win, userData }
 }
 
 declare global {

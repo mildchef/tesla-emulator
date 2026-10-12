@@ -21,6 +21,7 @@ export const IPC = {
   permissionRequest: 'main:permission-request',
   guestNavigate: 'main:guest-navigate',
   forceCollapse: 'main:force-collapse',
+  setLayout: 'main:set-layout',
   // guest frames <-> main
   guestInitialState: 'guest:initial-state',
   guestGear: 'guest:gear',

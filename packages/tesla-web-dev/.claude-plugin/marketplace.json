@@ -1,0 +1,16 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "tesla-web-dev",
+  "description": "Claude Code skill for building and testing web apps for the Tesla in-car browser",
+  "owner": {
+    "name": "mildchef"
+  },
+  "plugins": [
+    {
+      "name": "tesla-web-dev",
+      "description": "Know the Tesla in-car browser's limits and test web apps in the Tesla Emulator: open the app, shift into Drive, take screenshots, read the console.",
+      "source": "./plugins/tesla-web-dev",
+      "category": "development"
+    }
+  ]
+}

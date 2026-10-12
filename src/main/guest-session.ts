@@ -33,7 +33,7 @@ export function answerPermission(id: number, granted: boolean, hooks: GuestHooks
   pending.callback(granted)
 }
 
-function currentUserAgent(chromeVersion: string): string {
+export function currentUserAgent(chromeVersion: string): string {
   const s = store().settings
   return resolveUserAgent(getProfile(s.profileId), chromeVersion, s.userAgentOverride)
 }
@@ -178,6 +178,10 @@ export class BrowserGuest {
     contents.on('did-frame-finish-load', () => this.broadcastGear())
 
     void this.emulation.start()
+  }
+
+  get currentLayout(): BrowserLayout {
+    return this.layout
   }
 
   setLayout(layout: BrowserLayout): void {

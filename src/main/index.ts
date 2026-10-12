@@ -13,6 +13,8 @@ import {
   updateSessionUserAgent,
   type GuestHooks
 } from './guest-session'
+import { controlRoutes, trackConsole } from './control-routes'
+import { startControlServer } from './control-server'
 import { useProjectDataDir } from './data-dir'
 import { startProbeServer } from './probe-server'
 import { store } from './store'
@@ -139,6 +141,7 @@ function createWindow(): void {
 
   win.webContents.on('did-attach-webview', (_event, contents) => {
     guest = new BrowserGuest(contents, hooks)
+    trackConsole(contents)
     contents.on('destroyed', () => {
       if (guest?.contents === contents) guest = null
     })
@@ -174,6 +177,14 @@ vehicle.on('change', (next: VehicleState, prev: VehicleState) => {
   if (next.location !== prev.location) void guest?.emulation.update({ location: next.location })
 })
 
+function applySettings(patch: Partial<Settings>): Settings {
+  const settings = store().patchSettings(patch)
+  if ('profileId' in patch || 'userAgentOverride' in patch) updateSessionUserAgent()
+  guest?.refreshSettings()
+  sendUI(IPC.settingsChanged, settings)
+  return settings
+}
+
 function registerIpc(): void {
   ipcMain.handle(IPC.getSnapshot, () => snapshot())
   ipcMain.handle(IPC.setGear, (_e, gear: Gear) => {
@@ -185,13 +196,7 @@ function registerIpc(): void {
     vehicle.patch(rest)
     return vehicle.get()
   })
-  ipcMain.handle(IPC.patchSettings, (_e, patch: Partial<Settings>) => {
-    const settings = store().patchSettings(patch)
-    if ('profileId' in patch || 'userAgentOverride' in patch) updateSessionUserAgent()
-    guest?.refreshSettings()
-    sendUI(IPC.settingsChanged, settings)
-    return settings
-  })
+  ipcMain.handle(IPC.patchSettings, (_e, patch: Partial<Settings>) => applySettings(patch))
   ipcMain.handle(IPC.setBrowserLayout, (_e, layout: BrowserLayout) => {
     // Expanding the browser is a Park-only feature.
     const actual: BrowserLayout = layout === 'expanded' && !vehicle.parked ? 'split' : layout
@@ -294,6 +299,20 @@ app.whenReady().then(async () => {
   registerIpc()
   buildMenu()
   createWindow()
+  // Lets the tesla-web-dev skill's `emu` CLI drive the emulator.
+  await startControlServer(
+    controlRoutes({
+      window: () => (win && !win.isDestroyed() ? win : null),
+      guest: () => guest,
+      vehicle: () => vehicle.get(),
+      setGear,
+      events: () => recentEvents.slice(),
+      applySettings,
+      sendUI,
+      probeUrl: () => probeUrl,
+      quit: () => app.quit()
+    })
+  ).catch((err: unknown) => console.warn('[control] not started:', err))
 })
 
 app.on('window-all-closed', () => app.quit())

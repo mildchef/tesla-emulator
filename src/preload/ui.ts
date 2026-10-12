@@ -40,6 +40,7 @@ const api = {
   onPermissionRequest: (fn: (r: PermissionRequest) => void) => on(IPC.permissionRequest, fn),
   onGuestNavigate: (fn: (url: string) => void) => on(IPC.guestNavigate, fn),
   onForceCollapse: (fn: () => void) => on(IPC.forceCollapse, fn),
+  onSetLayout: (fn: (layout: BrowserLayout) => void) => on(IPC.setLayout, fn),
   onToggleDrawer: (fn: () => void) => on('menu:toggle-drawer', fn)
 }
 
