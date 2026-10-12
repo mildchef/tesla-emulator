@@ -32,7 +32,7 @@ The only outside resources are online: the map tiles (CARTO), favicons on the ne
 
 ## Using it
 
-- **Load your app:** type `localhost:5173` (or any URL) in the browser's address bar.
+- **Load your app:** start your dev server as usual and type its address, such as `localhost:5173` or `192.168.1.20:3000`, in the browser's address bar. Local addresses open over plain `http://`, which Chromium treats as secure, so geolocation and the camera work. The emulator's own UI runs on port 47173 in dev mode, so it doesn't take your app's port.
 - **Dev drawer (⌘. or the DEV tab):**
   - gear buttons
   - DevTools for the page under test

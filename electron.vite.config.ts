@@ -34,6 +34,8 @@ export default defineConfig({
       rollupOptions: { input: { index: resolve(__dirname, 'src/renderer/index.html') } }
     },
     resolve: { alias: { '@shared': resolve(__dirname, 'src/shared') } },
+    // Off the usual dev ports (Vite's 5173, 3000, 8080…), so the web app under test can keep them.
+    server: { port: 47173 },
     plugins: [react()]
   }
 })

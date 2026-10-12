@@ -230,6 +230,16 @@ test('a swipe still ends when its release never reaches the strip', async () => 
   await win.mouse.up()
 })
 
+test('typing localhost:PORT opens a local dev server over http', async () => {
+  const port = new URL(siteA.url).port
+  await win.fill('[data-testid=url-input]', `localhost:${port}/target.html`)
+  await win.press('[data-testid=url-input]', 'Enter')
+  await expect
+    .poll(() => app.evaluate(() => globalThis.__teslaEmulator.guestContents()!.getURL()), { timeout: 30_000 })
+    .toBe(`http://localhost:${port}/target.html`)
+  await expect.poll(() => guestEval<boolean>(app, 'window.isSecureContext && document.readyState === "complete"')).toBe(true)
+})
+
 test('popups open in the same view and downloads are blocked', async () => {
   await navigate(app, win, `${siteA.url}/popup.html`)
   await guestEval(app, 'openPopup()', true)
